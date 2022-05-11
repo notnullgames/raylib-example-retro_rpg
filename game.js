@@ -1,7 +1,7 @@
 // this is an example RPG game-engine.
 // edit assets/demo.md to control dialogs and game-flow
 
-import { promises as fs } from 'node:fs'
+import { promises as fs } from 'fs'
 import { basename, dirname, resolve } from 'node:path'
 import { runDialog, getASTInfo } from 'mdif'
 import tiled from 'tiled-load'
