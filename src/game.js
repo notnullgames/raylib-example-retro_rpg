@@ -40,6 +40,7 @@ const player = new Player({
 
 while (!r.WindowShouldClose()) {
   let walking = false
+  
   if (r.IsKeyDown(r.KEY_UP)){
     player.facing = 'north'
     walking = true
