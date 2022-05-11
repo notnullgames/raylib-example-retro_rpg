@@ -16,10 +16,10 @@ const defaultAnimations = {
     east: [81, 82, 83, 84, 85, 86, 87, 88]
   },
   walk: {
-    north: [94, 95, 96, 97, 98, 99, 100, 101, 102],
-    west: [107, 108, 109, 110, 111, 112, 113, 114, 115],
-    south: [120, 69, 70, 71, 72, 73, 74, 75, 76],
-    east: [133, 82, 83, 84, 85, 86, 87, 88, 89]
+    east: [94, 95, 96, 97, 98, 99],
+    north: [107, 108, 109, 110, 111, 112],
+    west: [120, 121, 122, 123, 124, 125],
+    south: [133, 134, 135, 136, 137, 138]
   },
   pull: {
     north: [146, 147, 148, 149, 150, 151],
@@ -39,16 +39,17 @@ const defaultAnimations = {
     south: [250, 251, 252, 253, 254, 255],
     east: [250, 251, 252, 253, 254, 255]
   },
+  // TODO: add blink or something
   idle: {
-    north: [97],
-    west: [110],
-    south: [71],
-    east: [84]
+    east: [97],
+    north: [110],
+    west: [123],
+    south: [136]
   }
 }
 
 export default class Player {
-  constructor ({ name = 'player', x = 0, y = 0, scale = 1, speed = 1, animation = 'idle', facing = 'south', animations = defaultAnimations }) {
+  constructor ({ name = 'player', x = 0, y = 0, scale = 1, speed = 10, animation = 'idle', facing = 'south', animations = defaultAnimations }) {
     this.name = name
     this.facing = facing
     this.animation = animation
@@ -57,7 +58,7 @@ export default class Player {
     this.scale = scale
     this.speed = speed
     this.animations = animations
-    this.sprite = new SpriteAnimation(`assets/${name}.png`, { frame: 0, frameSize: { x: 64, y: 64 }, origin: { x: 0, y: 0 } })
+    this.sprite = new SpriteAnimation(`assets/${name}.png`, { frame: 0, frameSize: { x: 64, y: 64 }, origin: { x: 32, y: 32 } })
   }
 
   update (time) {

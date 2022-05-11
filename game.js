@@ -25,13 +25,43 @@ if (!info.map) {
   throw new Error('map not set in frontmatter of game.')
 }
 
-const map = await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/')
-const player = new Player({name: 'char1'})
-
 r.InitWindow(320, 240, 'node-raylib rpg')
 r.SetTargetFPS(60)
 
+const map = await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/')
+const player = new Player({
+  name: 'char1',
+  x: 160,
+  y: 120,
+  animation: 'idle',
+  facing: 'south',
+  speed: 10
+})
+
 while (!r.WindowShouldClose()) {
+  let walking = false
+  if (r.IsKeyDown(r.KEY_UP)){
+    player.facing = 'north'
+    walking = true
+  }
+
+  if (r.IsKeyDown(r.KEY_DOWN)){
+    player.facing = 'south'
+    walking = true
+  }
+
+  if (r.IsKeyDown(r.KEY_LEFT)){
+    player.facing = 'west'
+    walking = true
+  }
+
+  if (r.IsKeyDown(r.KEY_RIGHT)){
+    player.facing = 'east'
+    walking = true
+  }
+
+  player.animation = walking ? 'walk' : 'idle'
+
   const time = r.GetTime()
   player.update(time)
   

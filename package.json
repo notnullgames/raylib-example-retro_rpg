@@ -4,7 +4,7 @@
   "type": "module",
   "version": "0.0.0",
   "scripts": {
-    "start": "node raylib game.js assets/game.md"
+    "start": "node game.js assets/game.md"
   },
   "keywords": [],
   "author": "David Konsumer <konsumer@jetboystudio.com>",
