@@ -1,13 +1,14 @@
 // this is an example RPG game-engine.
 // edit assets/demo.md to control dialogs and game-flow
 
-import { promises as fs } from 'fs'
+import { promises as fs } from 'node:fs'
 import { basename, dirname, resolve } from 'node:path'
 import { runDialog, getASTInfo } from 'mdif'
 import tiled from 'tiled-load'
+import r from 'raylib'
+
 import Player from './player.js'
 
-import r from 'raylib'
 
 const [, program, fname] = process.argv
 
@@ -25,15 +26,18 @@ if (!info.map) {
 }
 
 const map = await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/')
-
-console.log(map)
+const player = new Player({name: 'char1'})
 
 r.InitWindow(320, 240, 'node-raylib rpg')
 r.SetTargetFPS(60)
 
 while (!r.WindowShouldClose()) {
+  const time = r.GetTime()
+  player.update(time)
+  
   r.BeginDrawing()
   r.ClearBackground(r.BLACK)
+  player.draw()
   r.EndDrawing()
 }
 
