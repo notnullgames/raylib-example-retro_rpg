@@ -1,0 +1,155 @@
+<style>
+body {
+  font-family: sans-serif;
+}
+</style>
+<p>
+  This is a quick rudimentary tool to allow you to setup a spritesheet with named animations. <br/>
+  Choose an image, set height/width of frames, and select frames for an animation by dragging.
+</p>
+
+<input type="file" id="image" />
+
+<input type="number" id="width" value="64"/> x <input type="number" id="height" value="64"/>
+
+<br /><br />
+
+<div style="display: flex; width: 100%;">
+  <canvas id="canvas"></canvas>
+  <pre id="output" style="width: 100%; margin-left: 10px"></pre>
+</div>
+
+<img id="exampleImage" src="../assets/char1.png" style="display:none;"></img>
+
+<script>
+const canvas = document.getElementById('canvas')
+const context = canvas.getContext('2d')
+const output = document.getElementById('output')
+const imageInput = document.getElementById('image')
+const widthInput = document.getElementById('width')
+const heightInput = document.getElementById('height')
+let image = document.getElementById('exampleImage')
+
+// defalt animations for person
+const out = {
+  "magic:north": [0,1,2,3,4,5,6],
+  "magic:west": [13,14,15,15,17,18,19],
+  "magic:south": [26,27,28,29,30,31,32],
+  "magic:east": [39,40,41,42,43,44,45],
+  "thrust:north": [42,43,44,45,46,47,48,49],
+  "thrust:west": [55,56,57,58,59,60,61,62],
+  "thrust:south": [68,69,70,71,72,73,74,75],
+  "thrust:east": [81,82,83,84,85,86,87,88],
+  "walk:east": [143,144,145,146,147,148,149,150,151],
+  "walk:north": [104,105,106,107,108,109,110,111,112],
+  "walk:west": [117,118,119,120,121,122,123,124,125],
+  "walk:south": [130,131,132,133,134,135,136,137,138],
+  "pull:north": [146,147,148,149,150,151],
+  "pull:west": [159,160,161,162,163,164],
+  "pull:south": [172,173,174,175,176,177],
+  "pull:east": [185,186,187,188,189,190],
+  "bow:north": [198,199,200,201,202,203,204,205,206,207,208,209,210],
+  "bow:west": [211,212,213,214,215,216,217,218,219,220,221,222,223],
+  "bow:south": [224,225,226,227,228,229,230,231,232,233,234,235,236],
+  "bow:east": [237,238,239,240,241,242,243,244,245,246,247,248,249],
+  "die:north": [250,251,252,253,254,255],
+  "die:west": [250,251,252,253,254,255],
+  "die:south": [250,251,252,253,254,255],
+  "die:east": [250,251,252,253,254,255]
+}
+
+let dragging = false
+
+// keep track of the tile-size
+const tile = {}
+function updateTileSize () {
+  tile.width = parseInt(widthInput.value)
+  tile.height = parseInt(heightInput.value)
+}
+
+function updateOutput () {
+  // similar to indented JSON, but a bit more succinct
+  output.innerHTML = JSON.stringify(out).replace(/\],/g, '],\n  ').replace('{', '{\n  ').replace('}', '\n}').replace(/":/g, '": ')
+}
+
+// get the tile-number for a coordinate
+function tileFor (x, y) {
+  return Math.floor(x / tile.width) + (Math.floor(y / tile.height) * tile.framesWide)
+}
+
+// get the x/y cordinates for top-left corner of tile
+function coordinatesFor (t) {
+  const x = (t % tile.framesWide) * tile.width
+  const row = Math.floor(t / tile.framesWide)
+  const y = tile.height * row
+  return [x, y]
+}
+
+imageInput.addEventListener('change', () => {
+  const reader = new FileReader()
+  reader.onload = e => {
+    image = new Image()
+    image.src = e.target.result
+  }
+  reader.readAsDataURL(imageInput.files[0])
+})
+
+function draw () {
+  // clear canvas and updates tile.framesWide
+  canvas.width = image.naturalWidth
+  canvas.height = image.naturalHeight
+  tile.framesWide = Math.floor(canvas.width / tile.width)
+
+  context.drawImage(image, 0, 0)
+
+  context.lineWidth = 1
+  context.strokeStyle = "rgba(255,0,0, 0.5)"
+  context.fillStyle = "rgba(0,0, 255, 0.5)"
+  for (let x = 0; x < canvas.width; x += tile.width) {
+    for (let y = 0; y < canvas.height; y += tile.height) {
+      context.strokeRect(x + 0.5, y + 0.5, tile.width - 1, tile.height - 1)
+    }
+  }
+
+  if (dragging) {
+    for (const t of dragging) {
+      const [x, y] = coordinatesFor(t)
+      context.fillRect(x + 0.5, y + 0.5, tile.width - 1, tile.height - 1)
+    }
+  }
+
+  window.requestAnimationFrame(draw)
+}
+
+canvas.addEventListener('mousedown', e => {
+  dragging = []
+})
+
+canvas.addEventListener('mouseup', e => {
+  if (dragging) {
+    const name = window.prompt("What do you want to name this animation?")
+    if (name) {
+      out[name] = dragging
+      updateOutput()
+    }
+  }
+  dragging = false
+})
+
+canvas.addEventListener('mousemove', e => {
+  if (dragging) {
+    const rect = e.target.getBoundingClientRect()
+    const t = tileFor(e.clientX - rect.left, e.clientY - rect.top)
+    const i = dragging.indexOf(t)
+    if (i === -1) {
+      dragging.push(t)
+    }
+  }
+})
+
+widthInput.addEventListener('change', updateTileSize)
+heightInput.addEventListener('change', updateTileSize)
+updateOutput()
+updateTileSize()
+draw()
+</script>
