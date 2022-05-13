@@ -9,7 +9,6 @@ import r from 'raylib'
 
 import Player from './player.js'
 
-
 const [, program, fname] = process.argv
 
 if (!fname) {
@@ -39,36 +38,8 @@ const player = new Player({
 })
 
 while (!r.WindowShouldClose()) {
-  let walking = false
-  
-  if (r.IsKeyDown(r.KEY_UP)){
-    player.facing = 'north'
-    walking = true
-  }
-
-  if (r.IsKeyDown(r.KEY_DOWN)){
-    player.facing = 'south'
-    walking = true
-  }
-
-  if (r.IsKeyDown(r.KEY_LEFT)){
-    player.facing = 'west'
-    walking = true
-  }
-
-  if (r.IsKeyDown(r.KEY_RIGHT)){
-    player.facing = 'east'
-    walking = true
-  }
-
-  player.animation = walking ? 'walk' : 'idle'
-
-  const time = r.GetTime()
-  player.update(time)
-  
   r.BeginDrawing()
   r.ClearBackground(r.BLACK)
-  player.draw()
   r.EndDrawing()
 }
 

@@ -4,7 +4,8 @@
   "type": "module",
   "version": "0.0.0",
   "scripts": {
-    "start": "node src/game.js assets/game.md"
+    "start": "node src/game.js assets/game.md",
+    "test": "node src/test.js"
   },
   "keywords": [],
   "author": "David Konsumer <konsumer@jetboystudio.com>",
