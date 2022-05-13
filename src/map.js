@@ -16,24 +16,57 @@ export default class Map {
     this.map = map
     this.tint = tint
     this.bgcolor = colorFromTiled(this.map.backgroundcolor)
+    // preload images
+    for (const ts of this.map.tilesets) {
+      if (!ts.resource_image) {
+        ts.resource_image = r.LoadImage(ts.image)
+      }
+    }
+  }
+
+  // get the x/y cordinates for top-left corner of tile
+  coordinatesFor (gid) {
+    const x = (gid % this.map.width) * this.map.tilewidth
+    const row = Math.floor(gid / this.map.width)
+    const y = this.map.tileheight * row
+    return { x, y }
   }
 
   drawObjects (layer, posX, posY) {}
 
   drawImage (layer, posX, posY) {}
 
-  drawTiles (layer, posX, posY) {}
+  drawTiles (layer, posX, posY) {
+    const newTint = r.ColorAlpha(this.tint, layer.opacity)
+    switch (this.map.renderorder) {
+      case 'right-down':
+        for (let y = 0; y < this.map.height; y++) {
+          for (let x = 0; x < this.map.width; x++) {
+            const gid = layer.data[(y * this.map.width) + x]
+            const ts = this.map.tilesets[this.map.tiles[gid]]
+            if (typeof ts !== 'undefined') {
+              const srcRect = { ...this.coordinatesFor(gid), width: this.map.tilewidth, height: this.map.tileheight }
+              const position = { x: posX + (x * this.map.tilewidth), y: posY + (y * this.map.tileheight) }
+              if (ts.resource_image) {
+                r.DrawTextureRec(ts.resource_image, srcRect, position, newTint)
+              }
+            }
+          }
+        }
+        break
+    }
+  }
 
   drawLayer (layer, posX, posY) {
     switch (layer.type) {
       case 'group':
-        return this.drawLayers(layer.layers, posX + layer.offsetx, posY + layer.offsety)
+        return this.drawLayers(layer.layers, posX + layer.x, posY + layer.y)
       case 'objectgroup':
-        return this.drawObjects(layer, posX + layer.offsetx, posY + layer.offsety)
+        return this.drawObjects(layer, posX + layer.x, posY + layer.y)
       case 'imagelayer':
-        return this.drawImage(layer, posX + layer.offsetx, posY + layer.offsety)
+        return this.drawImage(layer, posX + layer.x, posY + layer.y)
       case 'tilelayer':
-        return this.drawTiles(layer, posX + layer.offsetx, posY + layer.offsety)
+        return this.drawTiles(layer, posX + layer.x, posY + layer.y)
     }
   }
 
