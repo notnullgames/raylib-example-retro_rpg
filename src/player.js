@@ -56,4 +56,8 @@ export default class Player {
   draw () {
     this.sprite.draw(this.x, this.y, this.scale)
   }
+
+  unload () {
+    this.sprite.unload()
+  }
 }

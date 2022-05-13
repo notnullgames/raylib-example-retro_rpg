@@ -1,8 +1,10 @@
 // I just used this to test sprite, map, dialog, while I was building things
 
 import r from 'raylib'
+import tiled from 'tiled-load'
 
 import Player from './player.js'
+import Map from './map.js'
 
 r.InitWindow(320, 240, 'node-raylib rpg')
 r.SetTargetFPS(60)
@@ -11,12 +13,17 @@ let animation = 0
 const animations = ['walk', 'magic', 'thrust', 'pull', 'bow', 'die']
 
 const player = new Player({
-  name: 'char6',
+  name: 'char5',
   x: 160,
   y: 120,
   animation: 'idle',
   facing: 'south',
   speed: 10
+})
+
+const map = new Map(await tiled('demo.tmj', './assets/'), {
+  x: 0,
+  y: 0
 })
 
 while (!r.WindowShouldClose()) {
@@ -65,9 +72,12 @@ while (!r.WindowShouldClose()) {
 
   r.BeginDrawing()
   r.ClearBackground(r.BLACK)
+  map.draw()
   player.draw()
   r.DrawText(`Press arrows to trigger animations,\nZ/X to change animation: ${animations[animation]}`, 10, 10, 10, r.WHITE)
   r.EndDrawing()
 }
 
+player.unload()
+map.unload()
 r.CloseWindow()

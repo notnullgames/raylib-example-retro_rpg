@@ -24,4 +24,8 @@ export default class SpriteAnimation {
       color
     )
   }
+
+  unload () {
+    r.UnloadTexture(this.image)
+  }
 }
