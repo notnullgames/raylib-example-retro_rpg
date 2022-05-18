@@ -12,14 +12,17 @@ r.SetTargetFPS(60)
 let animation = 0
 const animations = ['walk', 'magic', 'thrust', 'pull', 'bow', 'die']
 
-const player = new Player({
-  name: 'char5',
+const chars = [1, 2, 3, 4, 5, 6].map(c => new Player({
+  name: 'char' + c,
   x: 160,
   y: 120,
   animation: 'idle',
   facing: 'south',
   speed: 10
-})
+}))
+
+let currentPlayer = 0
+let player = chars[currentPlayer]
 
 const map = new Map(await tiled('demo.tmj', './assets/'), {
   x: 0,
@@ -28,6 +31,16 @@ const map = new Map(await tiled('demo.tmj', './assets/'), {
 
 while (!r.WindowShouldClose()) {
   let walking = false
+
+  if (currentPlayer >= chars.length) {
+    currentPlayer = 0
+  }
+
+  if (currentPlayer < 0) {
+    currentPlayer = chars.length - 1
+  }
+
+  player = chars[currentPlayer]
 
   if (r.IsKeyDown(r.KEY_UP)) {
     player.facing = 'north'
@@ -57,6 +70,14 @@ while (!r.WindowShouldClose()) {
     animation--
   }
 
+  if (r.IsKeyPressed(r.KEY_V)) {
+    currentPlayer++
+  }
+
+  if (r.IsKeyPressed(r.KEY_C)) {
+    currentPlayer--
+  }
+
   if (animation >= animations.length) {
     animation = 0
   }
@@ -74,7 +95,7 @@ while (!r.WindowShouldClose()) {
   r.ClearBackground(r.BLACK)
   map.draw()
   player.draw()
-  r.DrawText(`Press arrows to trigger animations,\nZ/X to change animation: ${animations[animation]}`, 10, 10, 10, r.WHITE)
+  r.DrawText(`Press arrows to trigger animations,\nC/V to chnage character: char${currentPlayer+1}.\nZ/X to change animation: ${animations[animation]}`, 10, 10, 10, r.WHITE)
   r.EndDrawing()
 }
 
