@@ -16,20 +16,6 @@ export default class Map {
     this.map = map
     this.tint = tint
     this.bgcolor = colorFromTiled(this.map.backgroundcolor)
-    // preload images
-    for (const ts of this.map.tilesets) {
-      if (!ts.resource_image) {
-        ts.resource_image = r.LoadImage(ts.image)
-      }
-    }
-  }
-
-  // get the x/y cordinates for top-left corner of tile
-  coordinatesFor (gid) {
-    const x = (gid % this.map.width) * this.map.tilewidth
-    const row = Math.floor(gid / this.map.width)
-    const y = this.map.tileheight * row
-    return { x, y }
   }
 
   drawObjects (layer, posX, posY) {}
@@ -37,23 +23,26 @@ export default class Map {
   drawImage (layer, posX, posY) {}
 
   drawTiles (layer, posX, posY) {
-    const newTint = r.ColorAlpha(this.tint, layer.opacity)
-    switch (this.map.renderorder) {
-      case 'right-down':
-        for (let y = 0; y < this.map.height; y++) {
-          for (let x = 0; x < this.map.width; x++) {
-            const gid = layer.data[(y * this.map.width) + x]
-            const ts = this.map.tilesets[this.map.tiles[gid]]
-            if (typeof ts !== 'undefined') {
-              const srcRect = { ...this.coordinatesFor(gid), width: this.map.tilewidth, height: this.map.tileheight }
-              const position = { x: posX + (x * this.map.tilewidth), y: posY + (y * this.map.tileheight) }
-              if (ts.resource_image) {
-                r.DrawTextureRec(ts.resource_image, srcRect, position, newTint)
-              }
+    const newTint = r.ColorAlpha(this.tint, layer.opacity * 255)
+    for (let y = 0; y < this.map.height; y++) {
+      for (let x = 0; x < this.map.width; x++) {
+        for (const layer of this.map.layers) {
+          if (layer.type === 'tilelayer' && layer.visible) {
+            const gid = layer.data[x + (y * this.map.width)]
+            if (gid && this.map.tiles[gid]) {
+              const { ts, sx, sy } = this.map.tiles[gid]
+              const tileset = this.map.tilesets[ts]
+              tileset.resource_image = tileset.resource_image || r.LoadTexture(tileset.image)
+              r.DrawTextureRec(
+                tileset.resource_image,
+                { x: sx, y: sy, width: tileset.tilewidth, height: tileset.tileheight },
+                { x: x * tileset.tilewidth, y: y * tileset.tileheight },
+                newTint
+              )
             }
           }
         }
-        break
+      }
     }
   }
 
