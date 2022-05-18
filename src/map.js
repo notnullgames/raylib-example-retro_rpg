@@ -35,7 +35,7 @@ export default class Map {
               r.DrawTextureRec(
                 tileset.resource_image,
                 { x: sx, y: sy, width: tileset.tilewidth, height: tileset.tileheight },
-                { x: x * tileset.tilewidth, y: y * tileset.tileheight },
+                { x: x * tileset.tilewidth + posX, y: y * tileset.tileheight + posY },
                 r.ColorAlpha(this.tint, layer.opacity * 255)
               )
             }
