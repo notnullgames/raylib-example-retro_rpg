@@ -95,7 +95,7 @@ while (!r.WindowShouldClose()) {
   r.ClearBackground(r.BLACK)
   map.draw()
   player.draw()
-  r.DrawText(`Press arrows to trigger animations,\nC/V to chnage character: char${currentPlayer+1}.\nZ/X to change animation: ${animations[animation]}`, 10, 10, 10, r.WHITE)
+  r.DrawText(`Press arrows to trigger animations,\nC/V to change character: char${currentPlayer+1}.\nZ/X to change animation: ${animations[animation]}`, 10, 10, 10, r.WHITE)
   r.EndDrawing()
 }
 
