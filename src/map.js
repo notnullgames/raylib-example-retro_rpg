@@ -15,7 +15,7 @@ export default class Map {
     this.y = y
     this.map = map
     this.tint = tint
-    this.bgcolor = colorFromTiled(this.map.backgroundcolor)
+    this.bgcolor = colorFromTiled(this.map.backgroundcolor || '#000000')
   }
 
   drawObjects (layer, posX, posY) {}
@@ -23,7 +23,6 @@ export default class Map {
   drawImage (layer, posX, posY) {}
 
   drawTiles (layer, posX, posY) {
-    const newTint = r.ColorAlpha(this.tint, layer.opacity * 255)
     for (let y = 0; y < this.map.height; y++) {
       for (let x = 0; x < this.map.width; x++) {
         for (const layer of this.map.layers) {
@@ -37,7 +36,7 @@ export default class Map {
                 tileset.resource_image,
                 { x: sx, y: sy, width: tileset.tilewidth, height: tileset.tileheight },
                 { x: x * tileset.tilewidth, y: y * tileset.tileheight },
-                newTint
+                r.ColorAlpha(this.tint, layer.opacity * 255)
               )
             }
           }
