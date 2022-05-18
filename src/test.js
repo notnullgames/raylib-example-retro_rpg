@@ -21,7 +21,7 @@ const chars = [1, 2, 3, 4, 5, 6].map(c => new Player({
   speed: 10
 }))
 
-let currentPlayer = 0
+let currentPlayer = 4
 let player = chars[currentPlayer]
 
 const map = new Map(await tiled('demo.tmj', './assets/'), {
