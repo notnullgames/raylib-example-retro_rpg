@@ -6,6 +6,7 @@ import { basename, dirname, resolve } from 'node:path'
 import { runDialog, getASTInfo } from 'mdif'
 import tiled from 'tiled-load'
 import r from 'raylib'
+import Map from './map.js'
 
 import Player from './player.js'
 
@@ -27,7 +28,6 @@ if (!info.map) {
 r.InitWindow(320, 240, 'node-raylib rpg')
 r.SetTargetFPS(60)
 
-const map = await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/')
 const player = new Player({
   name: 'char1',
   x: 160,
@@ -37,9 +37,13 @@ const player = new Player({
   speed: 10
 })
 
+const map = new Map(await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/', f => fs.readFile(f, 'utf8')), {})
+
 while (!r.WindowShouldClose()) {
   r.BeginDrawing()
-  r.ClearBackground(r.BLACK)
+  // r.ClearBackground(r.BLACK)
+  map.draw()
+  player.draw()
   r.EndDrawing()
 }
 

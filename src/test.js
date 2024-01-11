@@ -26,7 +26,7 @@ const chars = [1, 2, 3, 4, 5, 6].map(c => new Player({
 let currentPlayer = 4
 let player = chars[currentPlayer]
 
-const map = new Map(await tiled('demo.tmj', './assets/'), {
+const map = new Map(await tiled('demo.tmj', './assets/', f => fs.readFile(f, 'utf8')), {
   x: 0,
   y: 0
 })
@@ -109,7 +109,7 @@ while (!r.WindowShouldClose()) {
       if (dialog.currentOption >= dialog.state.menu.length) {
         dialog.currentOption = 0
       }
-    } 
+    }
   }
 
   if (animation >= animations.length) {
@@ -130,7 +130,7 @@ while (!r.WindowShouldClose()) {
   map.draw()
   player.draw()
   dialog.draw()
-  r.DrawText(`char${currentPlayer+1}.\nanimation: ${animations[animation]}`, 10, 10, 10, r.WHITE)
+  r.DrawText(`char${currentPlayer + 1}.\nanimation: ${animations[animation]}`, 10, 10, 10, r.WHITE)
   r.EndDrawing()
 }
 
