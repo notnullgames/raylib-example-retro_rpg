@@ -7,8 +7,8 @@ import { runDialog, getASTInfo } from 'mdif'
 import tiled from 'tiled-load'
 import r from 'raylib'
 import Map from './map.js'
-
 import Player from './player.js'
+import { buildCollisionPolygons, isColliding } from './collision.js'
 
 const [, program, fname] = process.argv
 
@@ -48,6 +48,7 @@ const player = new Player({
 
 const mapData = await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/', (f) => fs.readFile(f, 'utf8'))
 const map = new Map(mapData, {})
+const collisionPolygons = buildCollisionPolygons(mapData)
 
 const mapPixelW = mapData.width * mapData.tilewidth
 const mapPixelH = mapData.height * mapData.tileheight
@@ -56,9 +57,12 @@ while (!r.WindowShouldClose()) {
   const dt = r.GetFrameTime()
   const { dx, dy } = player.input(r)
 
-  // Move world position, clamped to map bounds
-  worldX = Math.max(0, Math.min(mapPixelW, worldX + dx * MOVE_SPEED * dt))
-  worldY = Math.max(0, Math.min(mapPixelH, worldY + dy * MOVE_SPEED * dt))
+  // Try X and Y movement independently so the player slides along edges
+  const nextX = Math.max(0, Math.min(mapPixelW, worldX + dx * MOVE_SPEED * dt))
+  const nextY = Math.max(0, Math.min(mapPixelH, worldY + dy * MOVE_SPEED * dt))
+
+  if (!isColliding(nextX, worldY, collisionPolygons)) worldX = nextX
+  if (!isColliding(worldX, nextY, collisionPolygons)) worldY = nextY
 
   // Map offset so the player appears centered
   map.x = Math.round(SCREEN_W / 2 - worldX)
