@@ -49,7 +49,7 @@ export default class Player {
   }
 
   update(time) {
-    const frames = (this.sprite.frame = this.animations[`${this.animation}:${this.facing}`])
+    const frames = this.animations[`${this.animation}:${this.facing}`]
     this.sprite.frame = frames[Math.floor(time * this.speed) % frames.length]
   }
 

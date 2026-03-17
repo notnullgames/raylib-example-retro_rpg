@@ -5,7 +5,7 @@ This project is meant to help you with ideas for setting up a retro RPG in [node
 ## Features
 
 - dialog-flows that can be easily edited in markdown (via [mdif](https://github.com/notnullgames/mdif))
-- simple mapping in [tiled](https://www.mapeditor.org/)
+- simple mapping in [Tiled](https://www.mapeditor.org/)
 - normalized characters (easier NPC & player modification with spritesheets) that you can edit graphically [here](https://notnullgames.github.io/universal-sprites/)
 
 ## Usage
@@ -14,3 +14,5 @@ This project is meant to help you with ideas for setting up a retro RPG in [node
 npm i
 npm start
 ```
+
+Essentially, edit [game.md](assets/game.md) to setup the dialog, and edit the map (in [Tiled](https://www.mapeditor.org/)) to create your game.

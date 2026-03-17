@@ -32,18 +32,18 @@ const player = new Player({
   name: 'char1',
   x: 160,
   y: 120,
-  animation: 'idle',
-  facing: 'north',
+  animation: 'magic',
+  facing: 'south',
   speed: 10
 })
 
 const map = new Map(await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/', (f) => fs.readFile(f, 'utf8')), {})
 
 while (!r.WindowShouldClose()) {
+  player.update(r.GetTime())
   r.BeginDrawing()
   // r.ClearBackground(r.BLACK)
   map.draw()
-  // player.update()
   player.draw()
   r.EndDrawing()
 }
