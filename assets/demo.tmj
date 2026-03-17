@@ -124,20 +124,83 @@
          "width":30,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":6,
+         "name":"objects",
+         "objects":[
+                {
+                 "gid":1025,
+                 "height":64,
+                 "id":1,
+                 "name":"player",
+                 "rotation":0,
+                 "type":"player",
+                 "visible":true,
+                 "width":64,
+                 "x":457,
+                 "y":460
+                }, 
+                {
+                 "gid":1031,
+                 "height":64,
+                 "id":2,
+                 "name":"test",
+                 "properties":[
+                        {
+                         "name":"dialog",
+                         "type":"string",
+                         "value":"test"
+                        }],
+                 "rotation":0,
+                 "type":"sign",
+                 "visible":true,
+                 "width":64,
+                 "x":337,
+                 "y":464
+                }, 
+                {
+                 "gid":1026,
+                 "height":64,
+                 "id":3,
+                 "name":"johnny",
+                 "properties":[
+                        {
+                         "name":"dialog",
+                         "type":"string",
+                         "value":"johnny"
+                        }],
+                 "rotation":0,
+                 "type":"player",
+                 "visible":true,
+                 "width":64,
+                 "x":765,
+                 "y":684
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":5,
- "nextobjectid":1,
+ "nextlayerid":7,
+ "nextobjectid":4,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.8.4",
+ "tiledversion":"1.11.2",
  "tileheight":32,
  "tilesets":[
         {
          "firstgid":1,
          "source":"terrain.tsj"
+        }, 
+        {
+         "firstgid":1025,
+         "source":"objects.tsj"
         }],
  "tilewidth":32,
  "type":"map",
- "version":"1.8",
+ "version":"1.10",
  "width":30
 }

@@ -1,60 +1,119 @@
-// this manages a dialog attached to a markdown file
+// Raylib dialog box renderer
+// Draws the current state of a DialogSystem at the bottom of the screen.
 
 import r from 'raylib'
 
-import { runDialog } from 'mdif'
+const DIALOG_PAD = 8
+const FONT_SIZE = 10
+const LINE_H = 12
 
-const patch = { source: { x: 0, y: 0, height: 64, width: 64 }, left: 6, top: 6, right: 6, bottom: 6, layout: r.NPATCH_NINE_PATCH }
+// Nine-patch descriptor for the 64x64 panel image
+const NPATCH = { source: { x: 0, y: 0, width: 64, height: 64 }, left: 6, top: 6, right: 6, bottom: 6, layout: r.NPATCH_NINE_PATCH }
 
-// crappy wordwrap. eventually do this properly
-const wrap = (s, w) => s.replace(new RegExp(`(?![^\\n]{1,${w}}$)([^\\n]{1,${w}})\\s`, 'g'), '$1\n')
+let _texture = null
 
-export default class Dialog {
-  constructor(md, options = {}) {
-    this.md = md
-    this.open = !!options.open
-    this.color = options.color || r.WHITE
-    this.fontSize = options.fontSize || 12
-    this.texture = options.texture || r.LoadTexture('assets/ninepatch.png')
-    this.position = options.position || { x: 5, y: 135, width: 312, height: 100 }
-    this.speed = options.speed || 2
-  }
+/**
+ * Load the dialog panel texture. Must be called after r.InitWindow().
+ * @param {string} imagePath  path to the ninepatch PNG (e.g. 'assets/ninepatch.png')
+ */
+export function initDialog(imagePath) {
+  _texture = r.LoadTexture(imagePath)
+}
 
-  set(dialog, position = 0, variables = {}) {
-    this.state = runDialog(this.md, dialog, variables, position)
-    if (this.state.ending === 'prompt') {
-      this.state.menu = runDialog(this.md, dialog, variables, position + 1)
-      this.currentOption = 0
+/**
+ * Word-wrap `text` so each line fits within `maxWidth` pixels.
+ * Returns an array of strings.
+ */
+function wrapText(text, maxWidth) {
+  const words = text.split(' ')
+  const lines = []
+  let current = ''
+
+  for (const word of words) {
+    const candidate = current ? current + ' ' + word : word
+    if (r.MeasureText(candidate, FONT_SIZE) <= maxWidth) {
+      current = candidate
     } else {
-      this.state.menu = false
+      if (current) lines.push(current)
+      current = word
+    }
+  }
+  if (current) lines.push(current)
+  return lines
+}
+
+/**
+ * Draw the dialog box for a DialogSystem instance.
+ *
+ * @param {import('./mdif.js').DialogSystem} dialog
+ * @param {number} screenW
+ * @param {number} screenH
+ * @param {number} menuIndex  currently highlighted menu item index
+ */
+export function drawDialog(dialog, screenW, screenH, menuIndex = 0) {
+  if (!dialog.isOpen) return
+
+  const innerW = screenW - DIALOG_PAD * 4  // usable text width inside the box
+
+  // --- measure required height --------------------------------------------
+
+  const contentLines = []  // array of { text, color }
+
+  // Speaker name shown above the box (line mode only)
+  const speaker = dialog.choices.length === 0 && dialog.current?.speaker ? dialog.current.speaker : null
+  const speakerH = speaker ? LINE_H : 0
+
+  if (dialog.choices.length > 0) {
+    // Menu mode: one row per choice
+    for (let i = 0; i < dialog.choices.length; i++) {
+      const prefix = i === menuIndex ? '> ' : '  '
+      contentLines.push({ text: prefix + dialog.choices[i].label, color: i === menuIndex ? r.YELLOW : r.WHITE })
+    }
+  } else if (dialog.current) {
+    const wrapped = wrapText(dialog.current.text, innerW)
+    for (const line of wrapped) {
+      contentLines.push({ text: line, color: r.WHITE })
     }
   }
 
-  draw() {
-    if (this.open) {
-      if (this.state.ending === 'more' || this.state.ending === 'prompt') {
-        r.DrawTextureNPatch(this.texture, patch, this.position, { x: 0, y: 0 }, 0, this.color)
+  const hasHint = dialog.choices.length === 0 && dialog.current
+  const contentH = contentLines.length * LINE_H
+  const boxH = contentH + DIALOG_PAD * 2 + (hasHint ? LINE_H : 0)
 
-        if (this.state.who) {
-          r.DrawText(this.state.who, this.position.x + 10 - 2, this.position.y - 10 - 2, this.fontSize, r.BLACK)
-          r.DrawText(this.state.who, this.position.x + 10, this.position.y - 10, this.fontSize, this.color)
-        }
+  // --- layout -------------------------------------------------------------
 
-        r.DrawText(wrap(this.state.text, 30), this.position.x + 10, this.position.y + 15, this.fontSize, this.color)
+  const boxX = DIALOG_PAD
+  const boxY = screenH - boxH - DIALOG_PAD - speakerH
+  const boxW = screenW - DIALOG_PAD * 2
 
-        if (this.state.menu) {
-          for (const o in this.state.menu) {
-            const { text } = this.state.menu[o]
-            r.DrawText(wrap(text, 30), this.position.x + 30, this.position.y + 34 + o * (this.fontSize + 4), this.fontSize, this.color)
-          }
+  // --- draw speaker name above box ----------------------------------------
 
-          r.DrawRectangle(this.position.x + 18, this.position.y + 38 + this.currentOption * 16, 5, 5, this.color)
-        }
+  if (speaker) {
+    r.DrawText(speaker, boxX + DIALOG_PAD, boxY, FONT_SIZE, r.YELLOW)
+  }
 
-        if (this.state.ending === 'more' && Math.floor(r.GetTime() * this.speed) % 2 === 0) {
-          r.DrawRectangle(this.position.x + this.position.width - 15, this.position.y + this.position.height - 15, 5, 5, this.color)
-        }
-      }
-    }
+  // --- draw nine-patch background -----------------------------------------
+
+  const position = { x: boxX, y: boxY + speakerH, width: boxW, height: boxH }
+  if (_texture) {
+    r.DrawTextureNPatch(_texture, NPATCH, position, { x: 0, y: 0 }, 0, r.WHITE)
+  } else {
+    // Fallback if initDialog() was not called
+    r.DrawRectangle(boxX, boxY + speakerH, boxW, boxH, r.Fade(r.BLACK, 0.75))
+    r.DrawRectangleLines(boxX, boxY + speakerH, boxW, boxH, r.WHITE)
+  }
+
+  // --- draw content -------------------------------------------------------
+
+  for (let i = 0; i < contentLines.length; i++) {
+    const { text, color } = contentLines[i]
+    r.DrawText(text, boxX + DIALOG_PAD, boxY + speakerH + DIALOG_PAD + i * LINE_H, FONT_SIZE, color)
+  }
+
+  // "press Z" hint in line mode
+  if (hasHint) {
+    const hint = '[Z] next'
+    const hintW = r.MeasureText(hint, FONT_SIZE)
+    r.DrawText(hint, boxX + boxW - DIALOG_PAD - hintW, boxY + speakerH + boxH - DIALOG_PAD - FONT_SIZE, FONT_SIZE, r.GRAY)
   }
 }
