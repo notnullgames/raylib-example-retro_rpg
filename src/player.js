@@ -49,6 +49,22 @@ export default class Player {
     this.sprite = new SpriteAnimation(`assets/${name}.png`, { frame: 0, frameSize: { x: 64, y: 64 }, origin: { x: 32, y: 32 } })
   }
 
+  // Returns { dx, dy } movement delta based on key input, updating facing/animation state
+  input(r) {
+    let dx = 0
+    let dy = 0
+
+    if (r.IsKeyDown(r.KEY_UP) || r.IsKeyDown(r.KEY_W)) { dy = -1; this.facing = 'north' }
+    if (r.IsKeyDown(r.KEY_DOWN) || r.IsKeyDown(r.KEY_S)) { dy = 1; this.facing = 'south' }
+    if (r.IsKeyDown(r.KEY_LEFT) || r.IsKeyDown(r.KEY_A)) { dx = -1; this.facing = 'west' }
+    if (r.IsKeyDown(r.KEY_RIGHT) || r.IsKeyDown(r.KEY_D)) { dx = 1; this.facing = 'east' }
+
+    const moving = dx !== 0 || dy !== 0
+    this.animation = moving ? 'walk' : 'idle'
+
+    return { dx, dy }
+  }
+
   update(time) {
     const frames = this.animations[`${this.animation}:${this.facing}`]
     this.sprite.frame = frames[Math.floor(time * this.speed) % frames.length]

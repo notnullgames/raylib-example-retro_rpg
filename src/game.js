@@ -28,18 +28,42 @@ if (!info.map) {
 r.InitWindow(320, 240, 'node-raylib rpg')
 r.SetTargetFPS(60)
 
+// Player is always drawn at screen center; the map scrolls around them
+const SCREEN_W = 320
+const SCREEN_H = 240
+const MOVE_SPEED = 80 // pixels per second
+
+// World position of the player (in map pixels)
+let worldX = 160
+let worldY = 120
+
 const player = new Player({
   name: 'char1',
-  x: 160,
-  y: 120,
-  animation: 'magic',
+  x: SCREEN_W / 2,
+  y: SCREEN_H / 2,
+  animation: 'idle',
   facing: 'south',
   speed: 10
 })
 
-const map = new Map(await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/', (f) => fs.readFile(f, 'utf8')), {})
+const mapData = await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/', (f) => fs.readFile(f, 'utf8'))
+const map = new Map(mapData, {})
+
+const mapPixelW = mapData.width * mapData.tilewidth
+const mapPixelH = mapData.height * mapData.tileheight
 
 while (!r.WindowShouldClose()) {
+  const dt = r.GetFrameTime()
+  const { dx, dy } = player.input(r)
+
+  // Move world position, clamped to map bounds
+  worldX = Math.max(0, Math.min(mapPixelW, worldX + dx * MOVE_SPEED * dt))
+  worldY = Math.max(0, Math.min(mapPixelH, worldY + dy * MOVE_SPEED * dt))
+
+  // Map offset so the player appears centered
+  map.x = Math.round(SCREEN_W / 2 - worldX)
+  map.y = Math.round(SCREEN_H / 2 - worldY)
+
   player.update(r.GetTime())
   r.BeginDrawing()
   map.draw()
