@@ -14,19 +14,22 @@ r.SetTargetFPS(60)
 let animation = 0
 const animations = ['walk', 'magic', 'thrust', 'pull', 'bow', 'die']
 
-const chars = [1, 2, 3, 4, 5, 6].map(c => new Player({
-  name: 'char' + c,
-  x: 160,
-  y: 120,
-  animation: 'idle',
-  facing: 'south',
-  speed: 10
-}))
+const chars = [1, 2, 3, 4, 5, 6].map(
+  (c) =>
+    new Player({
+      name: 'char' + c,
+      x: 160,
+      y: 120,
+      animation: 'idle',
+      facing: 'south',
+      speed: 10
+    })
+)
 
 let currentPlayer = 4
 let player = chars[currentPlayer]
 
-const map = new Map(await tiled('demo.tmj', './assets/', f => fs.readFile(f, 'utf8')), {
+const map = new Map(await tiled('demo.tmj', './assets/', (f) => fs.readFile(f, 'utf8')), {
   x: 0,
   y: 0
 })

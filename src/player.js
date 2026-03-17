@@ -36,7 +36,7 @@ defaultAnimations['die:west'] = defaultAnimations['die:south']
 defaultAnimations['die:east'] = defaultAnimations['die:south']
 
 export default class Player {
-  constructor ({ name = 'player', x = 0, y = 0, scale = 1, speed = 10, animation = 'idle', facing = 'south', animations = defaultAnimations }) {
+  constructor({ name = 'player', x = 0, y = 0, scale = 1, speed = 10, animation = 'idle', facing = 'south', animations = defaultAnimations }) {
     this.name = name
     this.facing = facing
     this.animation = animation
@@ -48,16 +48,16 @@ export default class Player {
     this.sprite = new SpriteAnimation(`assets/${name}.png`, { frame: 0, frameSize: { x: 64, y: 64 }, origin: { x: 32, y: 32 } })
   }
 
-  update (time) {
-    const frames = this.sprite.frame = this.animations[`${this.animation}:${this.facing}`]
+  update(time) {
+    const frames = (this.sprite.frame = this.animations[`${this.animation}:${this.facing}`])
     this.sprite.frame = frames[Math.floor(time * this.speed) % frames.length]
   }
 
-  draw () {
+  draw() {
     this.sprite.draw(this.x, this.y, this.scale)
   }
 
-  unload () {
+  unload() {
     this.sprite.unload()
   }
 }

@@ -33,16 +33,17 @@ const player = new Player({
   x: 160,
   y: 120,
   animation: 'idle',
-  facing: 'south',
+  facing: 'north',
   speed: 10
 })
 
-const map = new Map(await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/', f => fs.readFile(f, 'utf8')), {})
+const map = new Map(await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/', (f) => fs.readFile(f, 'utf8')), {})
 
 while (!r.WindowShouldClose()) {
   r.BeginDrawing()
   // r.ClearBackground(r.BLACK)
   map.draw()
+  // player.update()
   player.draw()
   r.EndDrawing()
 }

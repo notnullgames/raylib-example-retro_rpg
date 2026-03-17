@@ -5,7 +5,8 @@
   "version": "0.0.0",
   "scripts": {
     "start": "node src/game.js assets/game.md",
-    "test": "node src/test.js"
+    "test": "node src/test.js",
+    "format": "npx -y prettier -w ."
   },
   "keywords": [],
   "author": "David Konsumer <konsumer@jetboystudio.com>",
