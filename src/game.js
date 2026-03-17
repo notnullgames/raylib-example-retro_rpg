@@ -31,7 +31,6 @@ r.SetTargetFPS(60)
 // Player is always drawn at screen center; the map scrolls around them
 const SCREEN_W = 320
 const SCREEN_H = 240
-const MOVE_SPEED = 80 // pixels per second
 
 // World position of the player (in map pixels)
 let worldX = 160
@@ -44,6 +43,7 @@ const player = new Player({
   animation: 'idle',
   facing: 'south',
   speed: 10
+  // moveSpeed, feetY, feetW all use defaults from Player class
 })
 
 const mapData = await tiled(basename(info.map), dirname(resolve(dirname(fname), info.map)) + '/', (f) => fs.readFile(f, 'utf8'))
@@ -58,11 +58,18 @@ while (!r.WindowShouldClose()) {
   const { dx, dy } = player.input(r)
 
   // Try X and Y movement independently so the player slides along edges
-  const nextX = Math.max(0, Math.min(mapPixelW, worldX + dx * MOVE_SPEED * dt))
-  const nextY = Math.max(0, Math.min(mapPixelH, worldY + dy * MOVE_SPEED * dt))
+  const nextX = Math.max(0, Math.min(mapPixelW, worldX + dx * player.moveSpeed * dt))
+  const nextY = Math.max(0, Math.min(mapPixelH, worldY + dy * player.moveSpeed * dt))
 
-  if (!isColliding(nextX, worldY, collisionPolygons)) worldX = nextX
-  if (!isColliding(worldX, nextY, collisionPolygons)) worldY = nextY
+  // Test two foot points (left/right) at the base of the sprite
+  const feetY = worldY + player.feetY
+  const nextFeetY = nextY + player.feetY
+  const colX = isColliding(nextX - player.feetW, feetY, collisionPolygons) ||
+               isColliding(nextX + player.feetW, feetY, collisionPolygons)
+  const colY = isColliding(worldX - player.feetW, nextFeetY, collisionPolygons) ||
+               isColliding(worldX + player.feetW, nextFeetY, collisionPolygons)
+  if (!colX) worldX = nextX
+  if (!colY) worldY = nextY
 
   // Map offset so the player appears centered
   map.x = Math.round(SCREEN_W / 2 - worldX)

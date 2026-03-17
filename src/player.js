@@ -37,7 +37,18 @@ defaultAnimations['die:west'] = defaultAnimations['die:south']
 defaultAnimations['die:east'] = defaultAnimations['die:south']
 
 export default class Player {
-  constructor({ name = 'player', x = 0, y = 0, scale = 1, speed = 10, animation = 'idle', facing = 'south', animations = defaultAnimations }) {
+  constructor({
+    name = 'player',
+    x = 0, y = 0,
+    scale = 1,
+    speed = 10,
+    moveSpeed = 80,   // world pixels per second
+    feetY = 20,       // px below sprite center to probe for collision
+    feetW = 6,        // half-width of foot probe (left/right of center)
+    animation = 'idle',
+    facing = 'south',
+    animations = defaultAnimations
+  }) {
     this.name = name
     this.facing = facing
     this.animation = animation
@@ -45,6 +56,9 @@ export default class Player {
     this.y = y
     this.scale = scale
     this.speed = speed
+    this.moveSpeed = moveSpeed
+    this.feetY = feetY
+    this.feetW = feetW
     this.animations = animations
     this.sprite = new SpriteAnimation(`assets/${name}.png`, { frame: 0, frameSize: { x: 64, y: 64 }, origin: { x: 32, y: 32 } })
   }
