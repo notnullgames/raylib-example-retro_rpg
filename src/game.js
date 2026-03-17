@@ -42,7 +42,6 @@ const map = new Map(await tiled(basename(info.map), dirname(resolve(dirname(fnam
 while (!r.WindowShouldClose()) {
   player.update(r.GetTime())
   r.BeginDrawing()
-  // r.ClearBackground(r.BLACK)
   map.draw()
   player.draw()
   r.EndDrawing()

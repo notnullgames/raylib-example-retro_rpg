@@ -1,5 +1,6 @@
 // load & display sprites
 // loosely based on ideas from https://bedroomcoders.co.uk/sprite-sheets-with-raylib/
+// essentially, just set animation.frame to whatever the current frame is, then animation.draw()
 
 import r from 'raylib'
 

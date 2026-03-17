@@ -2,6 +2,7 @@
 
 import SpriteAnimation from './sprite_animation.js'
 
+// these are the default for spritesheets from https://notnullgames.github.io/universal-sprites/
 const defaultAnimations = {
   'magic:north': [0, 1, 2, 3, 4, 5, 6],
   'magic:west': [13, 14, 15, 15, 17, 18, 19],
