@@ -28,7 +28,7 @@ if (!dialog.info.map) {
 
 dialog.onChoice = (choice) => {
   if (choice.url === 'END') {
-    dialog._close()
+    dialog.close()
   } else {
     dialog.open(choice.url.replace(/^#/, ''))
   }
@@ -76,7 +76,7 @@ async function reset() {
   ctx.knockbackVy = 0
 
   // Close any open dialog
-  if (dialog.isOpen) dialog._close()
+  if (dialog.isOpen) dialog.close()
 
   // Reload objects (re-reads initial positions, resets enemy HP, health pickups, etc.)
   objects = await loadObjects(mapData, ctx)
@@ -90,11 +90,11 @@ async function reset() {
     facing: 'south'
   })
 
-  menuIndex   = 0
+  menuIndex = 0
   _attackTimer = 0
-  _dieTimer   = 0
-  _dieStart   = 0
-  gameOver    = false
+  _dieTimer = 0
+  _dieStart = 0
+  gameOver = false
 }
 
 await reset()
@@ -143,7 +143,6 @@ while (!r.WindowShouldClose()) {
       await reset()
     }
   } else {
-
     // --- dialog input -------------------------------------------------------
 
     if (dialog.isOpen) {
@@ -245,10 +244,7 @@ while (!r.WindowShouldClose()) {
   r.BeginDrawing()
   map.draw()
 
-  const drawables = [
-    { worldY: ctx.worldY, draw: () => player.draw() },
-    ...objects.filter((o) => o.worldY !== undefined).map((o) => ({ worldY: o.worldY, draw: () => o.draw(map.x, map.y) }))
-  ]
+  const drawables = [{ worldY: ctx.worldY, draw: () => player.draw() }, ...objects.filter((o) => o.worldY !== undefined).map((o) => ({ worldY: o.worldY, draw: () => o.draw(map.x, map.y) }))]
   drawables.sort((a, b) => a.worldY - b.worldY)
   for (const d of drawables) d.draw()
 
