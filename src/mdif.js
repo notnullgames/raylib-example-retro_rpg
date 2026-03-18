@@ -181,7 +181,7 @@ export class DialogSystem {
         this.choices = choices
         if (this.onChoices) this.onChoices(this.choices)
       } else {
-        this._close()
+        this.close()
       }
     }
   }
@@ -197,7 +197,7 @@ export class DialogSystem {
     } else {
       // Default handling when no callback is provided
       if (choice.url === 'END') {
-        this._close()
+        this.close()
       } else {
         const id = choice.url.replace(/^#/, '')
         this.open(id)

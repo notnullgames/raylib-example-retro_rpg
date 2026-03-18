@@ -170,6 +170,11 @@
                          "name":"dialog",
                          "type":"string",
                          "value":"johnny"
+                        }, 
+                        {
+                         "name":"sprite",
+                         "type":"string",
+                         "value":"char2"
                         }],
                  "rotation":0,
                  "type":"player",
