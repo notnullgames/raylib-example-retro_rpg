@@ -64,10 +64,18 @@ export function drawDialog(dialog, screenW, screenH, menuIndex = 0) {
   const speakerH = speaker ? LINE_H : 0
 
   if (dialog.choices.length > 0) {
-    // Menu mode: one row per choice
+    // Menu mode: word-wrap each choice, indent continuation lines
+    const prefix = '> '
+    const indent = '  '
+    const prefixW = r.MeasureText(prefix, FONT_SIZE)
     for (let i = 0; i < dialog.choices.length; i++) {
-      const prefix = i === menuIndex ? '> ' : '  '
-      contentLines.push({ text: prefix + dialog.choices[i].label, color: i === menuIndex ? r.YELLOW : r.WHITE })
+      const selected = i === menuIndex
+      const color = selected ? r.YELLOW : r.WHITE
+      const wrapped = wrapText(dialog.choices[i].label, innerW - prefixW)
+      for (let j = 0; j < wrapped.length; j++) {
+        const leader = j === 0 ? (selected ? prefix : indent) : indent
+        contentLines.push({ text: leader + wrapped[j], color })
+      }
     }
   } else if (dialog.current) {
     const wrapped = wrapText(dialog.current.text, innerW)

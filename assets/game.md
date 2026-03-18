@@ -6,14 +6,12 @@ map: demo.tmj
 
 > _demo_ Press Z or X to progress through this dialog.
 
-> _demo_ Hey, so this is a game-tester.
-
-> _demo_ It just shows all the elements working: sprites, maps, dialogs.
-
-> _demo_ You can wander around and touch/interact with things.
-
-- [Huh?](#test)
-- [Got it.](END)
+- [here](END)
+- [is](END)
+- [a](END)
+- [bigger](END)
+- [menu.](END)
+- [all these choices can trigger code, spawn a different dialog, or end the convo.](END)
 
 ## Johnny
 
