@@ -6,6 +6,8 @@
 //
 // Each handler class must implement:
 //   constructor(obj, ctx)   obj has .props as a plain {name:value} object
+//                           obj.tileset is set when the object has a gid:
+//                             { texture, tileIndex, tilewidth, tileheight, columns }
 //   update(time)
 //   draw(mapX, mapY)
 //   activate()              → true if the object consumed the activation
@@ -13,6 +15,7 @@
 
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import r from 'raylib'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -21,6 +24,17 @@ function normaliseProps(properties = []) {
   const out = {}
   for (const { name, value } of properties) out[name] = value
   return out
+}
+
+/** Find the tileset that owns a given gid */
+function tilesetForGid(tilesets, gid) {
+  // tilesets are sorted ascending by firstgid; find the last one whose firstgid <= gid
+  let result = null
+  for (const ts of tilesets) {
+    if (ts.firstgid <= gid) result = ts
+    else break
+  }
+  return result
 }
 
 /**
@@ -34,11 +48,31 @@ export async function loadObjects(mapData, ctx) {
   const objectLayer = mapData.layers.find((l) => l.type === 'objectgroup' && l.name === 'objects')
   if (!objectLayer) return []
 
+  // Cache textures by image path so we only load each once
+  const textureCache = new Map()
+
   const instances = []
 
   for (const rawObj of objectLayer.objects) {
     const obj = { ...rawObj, props: normaliseProps(rawObj.properties) }
     const cls = rawObj.type   // Tiled "class" field comes through as .type in JSON
+
+    // Resolve tileset sprite info for objects that have a gid
+    if (rawObj.gid != null) {
+      const ts = tilesetForGid(mapData.tilesets, rawObj.gid)
+      if (ts) {
+        if (!textureCache.has(ts.image)) {
+          textureCache.set(ts.image, r.LoadTexture(ts.image))
+        }
+        obj.tileset = {
+          texture:    textureCache.get(ts.image),
+          tileIndex:  rawObj.gid - ts.firstgid,
+          tilewidth:  ts.tilewidth,
+          tileheight: ts.tileheight,
+          columns:    ts.columns
+        }
+      }
+    }
 
     let HandlerClass
     try {
