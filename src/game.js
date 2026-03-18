@@ -5,7 +5,7 @@ import { promises as fs } from 'node:fs'
 import { basename, dirname, resolve } from 'node:path'
 import createDialog from './mdif.js'
 import { initDialog, drawDialog } from './dialog.js'
-import { loadObjects, findNearby } from './objects.js'
+import { loadObjects } from './objects.js'
 import tiled from 'tiled-load'
 import r from 'raylib'
 import Map from './map.js'
@@ -114,11 +114,10 @@ while (!r.WindowShouldClose()) {
       if (pressedZ || pressedX) dialog.advance()
     }
   } else {
-    // Activate nearest object when X is pressed
+    // Activate a nearby object when X is pressed
     if (pressedX) {
-      const nearby = findNearby(objects, ctx.worldX, ctx.worldY)
-      for (const obj of nearby) {
-        if (obj.activate()) {
+      for (const obj of objects) {
+        if (obj.near?.(ctx.worldX, ctx.worldY) && obj.activate()) {
           menuIndex = 0
           break
         }
@@ -136,10 +135,17 @@ while (!r.WindowShouldClose()) {
 
     const feetY = ctx.worldY + player.feetY
     const nextFeetY = nextY + player.feetY
-    const colX = isColliding(nextX - player.feetW, feetY, collisionPolygons) || isColliding(nextX + player.feetW, feetY, collisionPolygons)
-    const colY = isColliding(ctx.worldX - player.feetW, nextFeetY, collisionPolygons) || isColliding(ctx.worldX + player.feetW, nextFeetY, collisionPolygons)
-    if (!colX) ctx.worldX = nextX
-    if (!colY) ctx.worldY = nextY
+
+    // Tile-based collision
+    const tileColX = isColliding(nextX - player.feetW, feetY, collisionPolygons) || isColliding(nextX + player.feetW, feetY, collisionPolygons)
+    const tileColY = isColliding(ctx.worldX - player.feetW, nextFeetY, collisionPolygons) || isColliding(ctx.worldX + player.feetW, nextFeetY, collisionPolygons)
+
+    // Object-based collision
+    const objColX = objects.some(o => o.touching?.(nextX, ctx.worldY, player.feetW, player.feetY))
+    const objColY = objects.some(o => o.touching?.(ctx.worldX, nextY, player.feetW, player.feetY))
+
+    if (!tileColX && !objColX) ctx.worldX = nextX
+    if (!tileColY && !objColY) ctx.worldY = nextY
   }
 
   // --- map offset -----------------------------------------------------------
@@ -154,8 +160,17 @@ while (!r.WindowShouldClose()) {
 
   r.BeginDrawing()
   map.draw()
-  for (const obj of objects) obj.draw(map.x, map.y)
-  player.draw()
+
+  // Y-sorted draw: player + all drawable objects, back-to-front by world Y
+  const drawables = [
+    { worldY: ctx.worldY, draw: () => player.draw() },
+    ...objects
+      .filter(o => o.worldY !== undefined)
+      .map(o => ({ worldY: o.worldY, draw: () => o.draw(map.x, map.y) }))
+  ]
+  drawables.sort((a, b) => a.worldY - b.worldY)
+  for (const d of drawables) d.draw()
+
   drawDialog(dialog, SCREEN_W, SCREEN_H, menuIndex)
   r.EndDrawing()
 }

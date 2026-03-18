@@ -167,6 +167,11 @@
                  "name":"johnny",
                  "properties":[
                         {
+                         "name":"animation",
+                         "type":"string",
+                         "value":"magic"
+                        }, 
+                        {
                          "name":"dialog",
                          "type":"string",
                          "value":"johnny"

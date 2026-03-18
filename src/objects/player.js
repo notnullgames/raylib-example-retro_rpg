@@ -3,9 +3,13 @@
 // Two behaviours depending on name:
 //   name==="player"  → sets the initial world position of the user's player; no draw/activate
 //   name!=="player"  → an NPC: draws a Player sprite at the object position,
-//                      activates a dialog when the user presses X nearby
+//                      blocks movement when touched, activates a dialog when nearby
 
 import Player from '../player.js'
+
+// NPC collision: treat the NPC as a circle at its feet center
+const TOUCH_RADIUS = 14 // world px — solid body, blocks movement
+const NEAR_RADIUS = 48 // world px — "press X to talk" range
 
 export default class PlayerObject {
   /**
@@ -33,9 +37,10 @@ export default class PlayerObject {
     const spriteName = obj.props.sprite ?? 'char1'
     this.npc = new Player({
       name: spriteName,
-      x: 0, y: 0,   // screen position set each draw
-      animation: 'idle',
-      facing: 'south'
+      x: 0,
+      y: 0, // screen position set each draw
+      animation: obj.props.animation || 'idle',
+      facing: obj.props.facing || 'south'
     })
   }
 
@@ -56,7 +61,39 @@ export default class PlayerObject {
   }
 
   /**
-   * Called when the player presses the activate key nearby.
+   * Returns true if the player's foot probes overlap this NPC's solid body.
+   * @param {number} px     player world-center X
+   * @param {number} py     player world-center Y
+   * @param {number} feetW  half-width of foot probe
+   * @param {number} feetY  y-offset from player center to feet
+   */
+  touching(px, py, feetW, feetY) {
+    if (this.isPlayerSpawn) return false
+    // NPC feet center
+    const npcFeetY = this.worldY + this.npc.feetY
+    // Check left and right foot probes against NPC circle
+    for (const fx of [px - feetW, px + feetW]) {
+      const dx = fx - this.worldX
+      const dy = py + feetY - npcFeetY
+      if (dx * dx + dy * dy < TOUCH_RADIUS * TOUCH_RADIUS) return true
+    }
+    return false
+  }
+
+  /**
+   * Returns true if the player center is within talking range.
+   * @param {number} px  player world-center X
+   * @param {number} py  player world-center Y
+   */
+  near(px, py) {
+    if (this.isPlayerSpawn) return false
+    const dx = px - this.worldX
+    const dy = py - this.worldY
+    return dx * dx + dy * dy <= NEAR_RADIUS * NEAR_RADIUS
+  }
+
+  /**
+   * Called when the player presses the activate key while near.
    * Returns true if activation was consumed.
    */
   activate() {

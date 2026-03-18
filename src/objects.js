@@ -5,12 +5,15 @@
 // instantiates it.  Unknown classes are silently skipped.
 //
 // Each handler class must implement:
-//   constructor(obj, ctx)   obj has .props as a plain {name:value} object
-//                           obj.tileset is set when the object has a gid:
-//                             { texture, tileIndex, tilewidth, tileheight, columns }
+//   constructor(obj, ctx)        obj has .props as a plain {name:value} object
+//                                obj.tileset is set when the object has a gid:
+//                                  { texture, tileIndex, tilewidth, tileheight, columns }
 //   update(time)
 //   draw(mapX, mapY)
-//   activate()              → true if the object consumed the activation
+//   touching(px, py, feetW, feetY) → true if player foot-probes overlap this object's solid area
+//                                    px/py is player world-center, feetW/feetY match Player
+//   near(px, py)                 → true if player is close enough to activate
+//   activate()                   → true if the object consumed the activation
 //   unload()
 
 import { resolve, dirname } from 'node:path'
@@ -89,15 +92,4 @@ export async function loadObjects(mapData, ctx) {
   return instances
 }
 
-/**
- * Check if (wx, wy) is within `radius` pixels of an object's world position.
- * Objects without a worldX/worldY (e.g. player spawn) are skipped.
- */
-export function findNearby(objects, wx, wy, radius = 48) {
-  return objects.filter((o) => {
-    if (o.worldX === undefined) return false
-    const dx = o.worldX - wx
-    const dy = o.worldY - wy
-    return dx * dx + dy * dy <= radius * radius
-  })
-}
+
