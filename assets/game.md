@@ -20,3 +20,7 @@ map: demo.tmj
 > _Johnny_ Hey, what's up?
 
 > _Johnny_ I'm pretty busy doing magic.
+
+## deadzombie
+
+> Huh, a dead zombie. Magic is cool.

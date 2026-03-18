@@ -53,11 +53,11 @@ function wrapText(text, maxWidth) {
 export function drawDialog(dialog, screenW, screenH, menuIndex = 0) {
   if (!dialog.isOpen) return
 
-  const innerW = screenW - DIALOG_PAD * 4  // usable text width inside the box
+  const innerW = screenW - DIALOG_PAD * 4 // usable text width inside the box
 
   // --- measure required height --------------------------------------------
 
-  const contentLines = []  // array of { text, color }
+  const contentLines = [] // array of { text, color }
 
   // Speaker name shown above the box (line mode only)
   const speaker = dialog.choices.length === 0 && dialog.current?.speaker ? dialog.current.speaker : null

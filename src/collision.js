@@ -6,9 +6,11 @@
 function pointInPolygon(px, py, polygon) {
   let inside = false
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const xi = polygon[i].x, yi = polygon[i].y
-    const xj = polygon[j].x, yj = polygon[j].y
-    if ((yi > py) !== (yj > py) && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
+    const xi = polygon[i].x,
+      yi = polygon[i].y
+    const xj = polygon[j].x,
+      yj = polygon[j].y
+    if (yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
       inside = !inside
     }
   }
@@ -36,7 +38,7 @@ export function buildCollisionPolygons(mapData) {
         if (!tileset?.tiles) continue
 
         const localId = gid - tileset.firstgid
-        const tsjTile = tileset.tiles.find(t => t.id === localId)
+        const tsjTile = tileset.tiles.find((t) => t.id === localId)
         if (!tsjTile?.objectgroup) continue
 
         // Top-left corner of this tile in world pixels
@@ -48,7 +50,7 @@ export function buildCollisionPolygons(mapData) {
 
           // obj.x / obj.y is the anchor of the polygon within the tile
           // each polygon point is relative to that anchor
-          const worldPoly = obj.polygon.map(pt => ({
+          const worldPoly = obj.polygon.map((pt) => ({
             x: tileOriginX + obj.x + pt.x,
             y: tileOriginY + obj.y + pt.y
           }))

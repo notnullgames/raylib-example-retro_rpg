@@ -6,10 +6,10 @@
 import r from 'raylib'
 
 // Sign collision: a narrow rectangle at the post base (bottom of the sprite)
-const TOUCH_W = 10  // half-width of solid base, world px
-const TOUCH_H = 8   // half-height of solid base, world px
+const TOUCH_W = 10 // half-width of solid base, world px
+const TOUCH_H = 8 // half-height of solid base, world px
 // The post sits at the bottom of the 64px sprite, so offset down from worldY (sprite center)
-const TOUCH_Y_OFFSET = 24  // px below worldY to center of collision rect
+const TOUCH_Y_OFFSET = 24 // px below worldY to center of collision rect
 const NEAR_RADIUS = 48 // world px — "press X to read" range
 
 export default class SignObject {

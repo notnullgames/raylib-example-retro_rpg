@@ -58,7 +58,7 @@ export async function loadObjects(mapData, ctx) {
 
   for (const rawObj of objectLayer.objects) {
     const obj = { ...rawObj, props: normaliseProps(rawObj.properties) }
-    const cls = rawObj.type   // Tiled "class" field comes through as .type in JSON
+    const cls = rawObj.type // Tiled "class" field comes through as .type in JSON
 
     // Resolve tileset sprite info for objects that have a gid
     if (rawObj.gid != null) {
@@ -68,11 +68,11 @@ export async function loadObjects(mapData, ctx) {
           textureCache.set(ts.image, r.LoadTexture(ts.image))
         }
         obj.tileset = {
-          texture:    textureCache.get(ts.image),
-          tileIndex:  rawObj.gid - ts.firstgid,
-          tilewidth:  ts.tilewidth,
+          texture: textureCache.get(ts.image),
+          tileIndex: rawObj.gid - ts.firstgid,
+          tilewidth: ts.tilewidth,
           tileheight: ts.tileheight,
-          columns:    ts.columns
+          columns: ts.columns
         }
       }
     }
@@ -91,5 +91,3 @@ export async function loadObjects(mapData, ctx) {
 
   return instances
 }
-
-

@@ -187,6 +187,121 @@
                  "width":64,
                  "x":765,
                  "y":684
+                }, 
+                {
+                 "gid":1027,
+                 "height":64,
+                 "id":4,
+                 "name":"skulldood",
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"dialog_dead",
+                         "type":"string",
+                         "value":"deadzombie"
+                        }, 
+                        {
+                         "name":"hp",
+                         "type":"int",
+                         "value":3
+                        }, 
+                        {
+                         "name":"move_towards_player",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"speed",
+                         "type":"int",
+                         "value":10
+                        }, 
+                        {
+                         "name":"sprite",
+                         "type":"string",
+                         "value":"char3"
+                        }],
+                 "rotation":0,
+                 "type":"enemy",
+                 "visible":true,
+                 "width":64,
+                 "x":711,
+                 "y":143
+                }, 
+                {
+                 "gid":1032,
+                 "height":64,
+                 "id":7,
+                 "name":"heart",
+                 "properties":[
+                        {
+                         "name":"value",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"health",
+                 "visible":true,
+                 "width":64,
+                 "x":178,
+                 "y":779
+                }, 
+                {
+                 "gid":1032,
+                 "height":64,
+                 "id":8,
+                 "name":"heart",
+                 "properties":[
+                        {
+                         "name":"value",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"health",
+                 "visible":true,
+                 "width":64,
+                 "x":804,
+                 "y":561
+                }, 
+                {
+                 "gid":1032,
+                 "height":64,
+                 "id":9,
+                 "name":"heart",
+                 "properties":[
+                        {
+                         "name":"value",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"health",
+                 "visible":true,
+                 "width":64,
+                 "x":534,
+                 "y":836
+                }, 
+                {
+                 "gid":1032,
+                 "height":64,
+                 "id":10,
+                 "name":"heart",
+                 "properties":[
+                        {
+                         "name":"value",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"health",
+                 "visible":true,
+                 "width":64,
+                 "x":112,
+                 "y":166
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -195,7 +310,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":4,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
