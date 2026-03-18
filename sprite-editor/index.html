@@ -19,7 +19,7 @@
   <pre id="output" style="width: 100%; margin-left: 10px"></pre>
 </div>
 
-<img id="exampleImage" src="../assets/char1.png" style="display: none" />
+<img id="exampleImage" src="assets/char1.png" style="display: none" />
 
 <script>
   const canvas = document.getElementById('canvas')
@@ -43,6 +43,7 @@
     'walk:east': [144, 145, 146, 147, 148, 149, 150],
     'walk:north': [105, 106, 107, 108, 109, 110, 111, 112],
     'walk:west': [118, 119, 120, 121, 122, 123, 124],
+
     'walk:south': [131, 132, 133, 134, 135, 136, 137],
     'pull:north': [156, 157, 158, 159, 160, 161],
     'pull:west': [169, 170, 171, 172, 173, 174],
@@ -56,7 +57,10 @@
     'idle:north': [104],
     'idle:west': [117],
     'idle:south': [130],
-    'idle:east': [143]
+    'idle:east': [143],
+    'die:north': [260, 261, 262, 263, 264, 265],
+    'die:west': [260, 261, 262, 263, 264, 265],
+    'die:east': [260, 261, 262, 263, 264, 265]
   }
 
   let dragging = false

@@ -20,3 +20,5 @@ npm start
 Essentially, edit [game.md](assets/game.md) to setup the dialog, and edit the map (in [Tiled](https://www.mapeditor.org/)) to create your game.
 
 See `player` and `sign` in Tiled, to see how to link up objects, and those behaviors are in [objects/](src/objects/)
+
+You can also run `npm run sprite` locally, to open a little character animation-editor.

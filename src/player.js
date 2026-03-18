@@ -39,12 +39,13 @@ defaultAnimations['die:east'] = defaultAnimations['die:south']
 export default class Player {
   constructor({
     name = 'player',
-    x = 0, y = 0,
+    x = 0,
+    y = 0,
     scale = 1,
     speed = 10,
-    moveSpeed = 80,   // world pixels per second
-    feetY = 20,       // px below sprite center to probe for collision
-    feetW = 6,        // half-width of foot probe (left/right of center)
+    moveSpeed = 80, // world pixels per second
+    feetY = 20, // px below sprite center to probe for collision
+    feetW = 6, // half-width of foot probe (left/right of center)
     animation = 'idle',
     facing = 'south',
     animations = defaultAnimations
@@ -68,10 +69,22 @@ export default class Player {
     let dx = 0
     let dy = 0
 
-    if (r.IsKeyDown(r.KEY_UP) || r.IsKeyDown(r.KEY_W)) { dy = -1; this.facing = 'north' }
-    if (r.IsKeyDown(r.KEY_DOWN) || r.IsKeyDown(r.KEY_S)) { dy = 1; this.facing = 'south' }
-    if (r.IsKeyDown(r.KEY_LEFT) || r.IsKeyDown(r.KEY_A)) { dx = -1; this.facing = 'west' }
-    if (r.IsKeyDown(r.KEY_RIGHT) || r.IsKeyDown(r.KEY_D)) { dx = 1; this.facing = 'east' }
+    if (r.IsKeyDown(r.KEY_UP) || r.IsKeyDown(r.KEY_W)) {
+      dy = -1
+      this.facing = 'north'
+    }
+    if (r.IsKeyDown(r.KEY_DOWN) || r.IsKeyDown(r.KEY_S)) {
+      dy = 1
+      this.facing = 'south'
+    }
+    if (r.IsKeyDown(r.KEY_LEFT) || r.IsKeyDown(r.KEY_A)) {
+      dx = -1
+      this.facing = 'west'
+    }
+    if (r.IsKeyDown(r.KEY_RIGHT) || r.IsKeyDown(r.KEY_D)) {
+      dx = 1
+      this.facing = 'east'
+    }
 
     const moving = dx !== 0 || dy !== 0
     this.animation = moving ? 'walk' : 'idle'

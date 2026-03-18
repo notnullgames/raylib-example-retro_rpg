@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/game.js assets/game.md",
     "test": "node src/test.js",
-    "format": "npx -y prettier -w ."
+    "format": "npx -y prettier -w .",
+    "sprite": "npx -y live-server sprite-editor --mount=/assets:assets"
   },
   "keywords": [],
   "author": "David Konsumer <konsumer@jetboystudio.com>",
